@@ -41,7 +41,6 @@ def git_commit_all(message):
 
 def git_set_date(date):
     if settings['deploy'] == False: return
-    # git commit --amend --no-edit --date="2020.11.02 12:00"
     formatted_date = date.strftime("--date=\"%Y.%m.%d %H:%M\"")
     return subprocess.check_output(['git', 'commit', '--amend', '--no-edit', formatted_date])
 
