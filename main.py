@@ -8,14 +8,14 @@ import os
 import re
 
 settings = {
-  "commits_per_pixel": 120,
+  "commits_per_pixel": 480,
   "commits_per_blank_pixel": 0,
-  "deploy": True,
-  "source_img": './message.png',
+  "deploy": False,
+  "source_img": './messages/message2.png',
   "start_date": {
-    "y": 2020,
-    "m": 7,
-    "d": 12
+    "y": 2023,
+    "m": 4,
+    "d": 2
   }
 }
 
