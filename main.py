@@ -85,7 +85,7 @@ def main():
                     # add new line to file
                     write_file_new_line('log.txt' , log_msg)
                 else:
-                    #replace last line of file
+                    # replace last line of file
                     write_file_replace_line('log.txt', log_msg)
             
             total_iterations = total_iterations + 1
@@ -97,4 +97,9 @@ def main():
         if commit_number >= 1:
             git_push()
 
-main()
+def init():
+    # Delete any previous contents of log.txt
+    open('log.txt', 'w').close()
+    main()
+
+init()
