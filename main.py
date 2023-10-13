@@ -10,7 +10,7 @@ import re
 settings = {
   "commits_per_pixel": 480,
   "commits_per_blank_pixel": 0,
-  "deploy": False,
+  "deploy": True,
   "source_img": './messages/message2.png',
   "start_date": {
     "y": 2023,
