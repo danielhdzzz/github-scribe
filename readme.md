@@ -25,7 +25,7 @@ Path to the image that will be printed. It should only contain either black or w
 The `start_date` in which the message will be printed. It has to be a sunday, since it is the first row of the contributions graph.
 
 #### deploy
-Set `deploy` to true to enable commiting and pushing to your github repo.
+Set `deploy` to true to enable commiting and pushing to your github repo. I recommend running it once with this option disabled, to check that it runs without any errors.
 
 ---
 
