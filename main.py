@@ -35,11 +35,6 @@ def write_file_replace_line(filename, string):
     # now write the modified list back out to the file
     open(filename, 'w').writelines(lines)
 
-def git_prune(message):
-    if settings['deploy'] == False: return
-    subprocess.check_output(['git', 'gc', '--prune=now'])
-    return subprocess.check_output(['rm', 'gc.log'])
-
 def git_commit_all(message):
     if settings['deploy'] == False: return
     return subprocess.check_output(['git', 'commit', '-am', message])
@@ -101,7 +96,6 @@ def main():
 
         if commit_number >= 1:
             git_push()
-            git_prune()
 
 def init():
     # Delete any previous contents of log.txt
