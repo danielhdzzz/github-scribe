@@ -6,8 +6,8 @@ Prints out a small image into the contributions graph of a github profile.
 
 | Prop        | Type                 |
 | ----------- | -------------------- |
-| `commits_per_pixel`| `number`      |
-| `commits_per_blank_pixel`| `number`|
+| `commits_per_pixel`| `integer`      |
+| `commits_per_blank_pixel`| `integer`|
 | `deploy`    | `boolean`            |
 | `source_img`| `string`             |
 | `start_date`: `y`, `m`, `d`| `integer`|
