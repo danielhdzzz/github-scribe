@@ -16,9 +16,12 @@
 
 # 🪶 Github Scribe
 
+Prints out a small image into the contributions graph of a github profile.
+
 ### Settings and running the script
 
-Set the `start_date` in which the message will be printed. Link a black and white `source_img` of 7 pixels in height. Set `commits_per_pixel` to determine how many commits will be made per "pixel", accounts with a large number of commits will have to use a high value in order to display a clear image. Set `deploy` to true to enable commiting and pushing to your github repo.
+Set the `start_date` in which the message will be printed. Link a black and white `source_img` of 7 pixels in height. Set `commits_per_pixel` to determine how many commits will be made per "pixel". Accounts with a large number of commits will have to use a high `commits_per_pixel` value in order to display a clear image. Set `deploy` to true to enable commiting and pushing to your github repo.
+
 ```python
 settings = {
   "commits_per_pixel": 400,
@@ -34,6 +37,7 @@ settings = {
 ```
 
 Run the script
+
 ```bash
 python3 main.py
 ```
