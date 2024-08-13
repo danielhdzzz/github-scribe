@@ -43,6 +43,7 @@ def git_set_date(date):
     if settings['deploy'] == False: return
     formatted_date = date.strftime("--date=\"%Y.%m.%d %H:%M\"")
     return subprocess.check_output(['git', 'commit', '--amend', '--no-edit', formatted_date])
+    return subprocess.check_output(['git', 'prune'])
 
 def git_push():
     if settings['deploy'] == False: return
