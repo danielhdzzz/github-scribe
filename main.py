@@ -35,15 +35,19 @@ def write_file_replace_line(filename, string):
     # now write the modified list back out to the file
     open(filename, 'w').writelines(lines)
 
+def git_prune(message):
+    if settings['deploy'] == False: return
+    return subprocess.check_output(['git', 'prune'])
+
 def git_commit_all(message):
     if settings['deploy'] == False: return
     return subprocess.check_output(['git', 'commit', '-am', message])
+    
 
 def git_set_date(date):
     if settings['deploy'] == False: return
     formatted_date = date.strftime("--date=\"%Y.%m.%d %H:%M\"")
     return subprocess.check_output(['git', 'commit', '--amend', '--no-edit', formatted_date])
-    return subprocess.check_output(['git', 'prune'])
 
 def git_push():
     if settings['deploy'] == False: return
@@ -96,6 +100,7 @@ def main():
 
         if commit_number >= 1:
             git_push()
+            git_prune()
 
 def init():
     # Delete any previous contents of log.txt
