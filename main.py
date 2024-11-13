@@ -37,7 +37,7 @@ def write_file_replace_line(filename, string):
 
 def git_prune(message):
     if settings['deploy'] == False: return
-    return subprocess.check_output(['git', 'prune'])
+    return subprocess.check_output(['git', 'gc', '--prune=now'])
 
 def git_commit_all(message):
     if settings['deploy'] == False: return
