@@ -2,6 +2,15 @@
 
 Prints out a small image into the contributions graph of a GitHub profile.
 
+## Getting Started
+
+This tool works by creating commits in a git repo. To use it, you'll need your own repo to commit to:
+
+- **Fork this repo**, or
+- **Create a new repo** and clone it locally
+
+The commits will appear on your GitHub contribution graph once pushed.
+
 ## Setup
 
 ```bash
