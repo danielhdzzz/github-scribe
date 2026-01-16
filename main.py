@@ -99,8 +99,26 @@ def print_preview(img, args, start_date):
 
 def confirm_proceed():
     """Ask user to confirm before proceeding."""
-    response = input("\nProceed? [y/N]: ").strip().lower()
+    response = input("\nProceed? [y/n]: ").strip().lower()
     return response in ('y', 'yes')
+
+def calc_total_commits(img, commits_per_pixel, commits_per_blank):
+    """Calculate total number of commits needed."""
+    total = 0
+    for row in img:
+        for pixel in row:
+            total += commits_per_pixel if pixel == 255 else commits_per_blank
+    return total
+
+def print_progress(current, total, day, total_days, date):
+    """Print progress bar with stats."""
+    bar_width = 30
+    pct = current / total if total > 0 else 1
+    filled = int(bar_width * pct)
+    bar = "█" * filled + "░" * (bar_width - filled)
+    date_str = date.strftime("%Y-%m-%d")
+    line = f"\r[{bar}] {pct*100:5.1f}% | Day {day}/{total_days} | {current}/{total} commits | {date_str}"
+    print(line, end="", flush=True)
 
 def write_file_new_line(filename, string):
     if os.path.isfile(filename):
@@ -159,11 +177,10 @@ def main():
         print("Aborted.")
         return
 
-    print()  # Blank line before commit output
-
     total_days = len(img) * len(img[0])
+    total_commits = calc_total_commits(img, args.commits_per_pixel, args.commits_per_blank)
     current_day = 0
-    total_iterations = 0
+    current_commit = 0
     commit_day = start_date
 
     # For each day
@@ -172,29 +189,30 @@ def main():
         pixel = img[coord[0]][coord[1]]
         commit_number = args.commits_per_pixel if pixel == 255 else args.commits_per_blank
 
-        for i in range(commit_number):
-            log_msg = f'Day {current_day + 1}. Commits {i + 1}. Iterations: {total_iterations + 1}. Date {commit_day}'
-            print(log_msg)
+        for j in range(commit_number):
+            log_msg = f'Day {current_day + 1}. Commits {j + 1}. Iterations: {current_commit + 1}. Date {commit_day}'
 
             if commit_number == 1:
-                # add new line to file
                 write_file_new_line('log.txt', log_msg)
             else:
-                if i == 0:
-                    # add new line to file
+                if j == 0:
                     write_file_new_line('log.txt', log_msg)
                 else:
-                    # replace last line of file
                     write_file_replace_line('log.txt', log_msg)
 
-            total_iterations = total_iterations + 1
+            current_commit += 1
             git_commit_all(log_msg, args.dry_run)
             git_set_date(commit_day, args.dry_run)
-        current_day = current_day + 1
+            print_progress(current_commit, total_commits, current_day + 1, total_days, commit_day)
+
+        current_day += 1
         commit_day = commit_day + timedelta(days=1)
 
         if commit_number >= 1:
             git_push(args.dry_run)
+
+    print()  # Newline after progress bar
+    print(f"Done! {current_commit} commits over {total_days} days.")
 
 
 if __name__ == '__main__':
