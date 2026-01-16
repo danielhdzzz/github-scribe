@@ -182,6 +182,8 @@ def main():
     current_day = 0
     current_commit = 0
     commit_day = start_date
+    days_since_push = 0
+    has_unpushed = False
 
     # For each day
     for i in range(total_days):
@@ -204,12 +206,21 @@ def main():
             git_commit_all(log_msg, args.dry_run)
             git_set_date(commit_day, args.dry_run)
             print_progress(current_commit, total_commits, current_day + 1, total_days, commit_day)
+            has_unpushed = True
 
         current_day += 1
         commit_day = commit_day + timedelta(days=1)
+        days_since_push += 1
 
-        if commit_number >= 1:
+        # Push every 7 days
+        if days_since_push >= 7 and has_unpushed:
             git_push(args.dry_run)
+            days_since_push = 0
+            has_unpushed = False
+
+    # Final push for any remaining commits
+    if has_unpushed:
+        git_push(args.dry_run)
 
     print()  # Newline after progress bar
     print(f"Done! {current_commit} commits over {total_days} days.")
