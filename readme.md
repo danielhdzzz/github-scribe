@@ -45,13 +45,13 @@ python3 main.py --image <path> --start-date <YYYY-MM-DD> [options]
 Dry run to preview:
 
 ```bash
-python3 main.py --image ./messages/hello.png --start-date 2025-08-17 --dry-run
+python3 main.py --image ./images/image1.png --start-date 2025-08-17 --dry-run
 ```
 
 Run with custom commit intensity:
 
 ```bash
-python3 main.py -i ./messages/hello.png -s 2025-08-17 -c 150
+python3 main.py -i ./images/image1.png -s 2025-08-17 -c 150
 ```
 
 ### Notes
