@@ -1,4 +1,4 @@
-# Github Scribe
+# 🪶 Github Scribe
 
 Prints out a small image into the contributions graph of a GitHub profile.
 

@@ -120,21 +120,42 @@ def print_progress(current, total, day, total_days, date):
     line = f"\r[{bar}] {pct*100:5.1f}% | Day {day}/{total_days} | {current}/{total} commits | {date_str}"
     print(line, end="", flush=True)
 
-def write_file_new_line(filename, string):
-    if os.path.isfile(filename):
-        with open(filename, 'a') as f:          
-            f.write('\n' + string)   
-    else:
-        with open(filename, 'w') as f:                   
-            f.write(string)
+def write_progress_log(filename, img, current_day, current_commit, total_commits, total_days, commit_day):
+    """Write progress log with ASCII preview showing current position."""
+    height, width = img.shape
+    pct = (current_commit / total_commits * 100) if total_commits > 0 else 100
 
-def write_file_replace_line(filename, string):
-    lines = open(filename, 'r').readlines()
-    # Edit the last line of the list of lines
-    new_last_line = string
-    lines[-1] = new_last_line
-    # now write the modified list back out to the file
-    open(filename, 'w').writelines(lines)
+    # Current position in image
+    current_row = current_day % 7
+    current_col = current_day // 7
+
+    lines = []
+    lines.append(f"Progress: {pct:.1f}%")
+    lines.append(f"Commits:  {current_commit}/{total_commits}")
+    lines.append(f"Day:      {current_day}/{total_days}")
+    lines.append(f"Date:     {commit_day.strftime('%Y-%m-%d')}")
+    lines.append("")
+
+    # ASCII preview with position marker
+    for row in range(height):
+        line = ""
+        for col in range(width):
+            # Check if this cell has been processed
+            cell_day = col * 7 + row
+            if cell_day < current_day:
+                # Already processed - show the pixel
+                pixel = img[row][col]
+                line += "█" if pixel == 255 else "░"
+            elif cell_day == current_day:
+                # Current position - mark it
+                line += "▓"
+            else:
+                # Not yet processed
+                line += "·"
+        lines.append(line)
+
+    with open(filename, 'w') as f:
+        f.write('\n'.join(lines))
 
 def git_commit_all(message, dry_run):
     if dry_run: return
@@ -192,18 +213,9 @@ def main():
         commit_number = args.commits_per_pixel if pixel == 255 else args.commits_per_blank
 
         for j in range(commit_number):
-            log_msg = f'Day {current_day + 1}. Commits {j + 1}. Iterations: {current_commit + 1}. Date {commit_day}'
-
-            if commit_number == 1:
-                write_file_new_line('log.txt', log_msg)
-            else:
-                if j == 0:
-                    write_file_new_line('log.txt', log_msg)
-                else:
-                    write_file_replace_line('log.txt', log_msg)
-
             current_commit += 1
-            git_commit_all(log_msg, args.dry_run)
+            write_progress_log('log.txt', img, current_day, current_commit, total_commits, total_days, commit_day)
+            git_commit_all(f'{current_commit}/{total_commits}', args.dry_run)
             git_set_date(commit_day, args.dry_run)
             print_progress(current_commit, total_commits, current_day + 1, total_days, commit_day)
             has_unpushed = True
