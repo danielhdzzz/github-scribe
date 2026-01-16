@@ -43,6 +43,8 @@ python3 main.py -i ./messages/hello.png -s 2025-08-17 -c 150
 - The image should only contain black or white pixels
 - The start date must be a Sunday (first row of the contributions graph)
 - Accounts with many existing commits may need a higher `--commits-per-pixel` value for the image to be visible
+- Before running, an ASCII preview of the image and settings summary will be displayed
+- You will be prompted to confirm before commits are made
 
 ## Demo
 

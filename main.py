@@ -41,6 +41,67 @@ def parse_args():
     )
     return parser.parse_args()
 
+def print_preview(img, args, start_date):
+    """Print ASCII preview of the contribution graph, chunked by year."""
+    height, width = img.shape
+
+    # Print settings summary
+    print("Settings:")
+    print(f"  Image:            {args.image}")
+    print(f"  Start date:       {start_date.strftime('%Y-%m-%d')} ({start_date.strftime('%A')})")
+    print(f"  Commits/pixel:    {args.commits_per_pixel}")
+    print(f"  Commits/blank:    {args.commits_per_blank}")
+    print(f"  Image dimensions: {width}x{height}")
+    print()
+
+    # Calculate date range
+    end_date = start_date + timedelta(days=width * 7 - 1)
+
+    # Get all years spanned
+    years = list(range(start_date.year, end_date.year + 1))
+
+    print("Preview:")
+    for year_idx, year in enumerate(years):
+        year_start = datetime(year, 1, 1)
+        year_end = datetime(year, 12, 31)
+
+        # Find column range for this year
+        if year_start <= start_date:
+            first_col = 0
+        else:
+            days_diff = (year_start - start_date).days
+            first_col = days_diff // 7
+
+        if year_end >= end_date:
+            last_col = width - 1
+        else:
+            days_diff = (year_end - start_date).days
+            last_col = days_diff // 7
+
+        print(f"  {year}:")
+
+        for row in range(7):
+            line = "  "
+            row_has_content = False
+            for col in range(first_col, last_col + 1):
+                day_date = start_date + timedelta(days=col * 7 + row)
+                if year_start <= day_date <= year_end and start_date <= day_date <= end_date:
+                    pixel = img[row][col]
+                    line += "█" if pixel == 255 else "░"
+                    row_has_content = True
+                else:
+                    line += " "
+            if row_has_content:
+                print(line.rstrip())
+
+        if year_idx < len(years) - 1:
+            print()
+
+def confirm_proceed():
+    """Ask user to confirm before proceeding."""
+    response = input("\nProceed? [y/N]: ").strip().lower()
+    return response in ('y', 'yes')
+
 def write_file_new_line(filename, string):
     if os.path.isfile(filename):
         with open(filename, 'a') as f:          
@@ -85,13 +146,25 @@ def main():
     start_date = datetime.strptime(args.start_date, '%Y-%m-%d')
 
     img = cv2.imread(args.image, 0)
+
+    # Show preview
+    print_preview(img, args, start_date)
+
+    # Handle dry-run or confirmation
+    if args.dry_run:
+        print("\n[DRY RUN] No commits will be made")
+        return
+
+    if not confirm_proceed():
+        print("Aborted.")
+        return
+
+    print()  # Blank line before commit output
+
     total_days = len(img) * len(img[0])
     current_day = 0
     total_iterations = 0
     commit_day = start_date
-
-    if args.dry_run:
-        print('[DRY RUN] No commits will be made\n')
 
     # For each day
     for i in range(total_days):
